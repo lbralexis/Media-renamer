@@ -58,7 +58,7 @@ else:
 st.markdown(
     """
     <div style="text-align: center; margin-top: 50px; font-size: 14px; color: grey;">
-        Made with 🩵 by <b>Nom’Propre</b>
+        Made with 🩵</b>
     </div>
     """,
     unsafe_allow_html=True
