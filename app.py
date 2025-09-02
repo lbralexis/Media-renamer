@@ -13,15 +13,16 @@ uploaded_files = st.file_uploader("Sélectionne tes fichiers", type=None, accept
 
 if uploaded_files and sap_code.isdigit() and title.strip():
     st.markdown("### 👀 Preview des fichiers renommés")
+    cols = st.columns(5)  # 5 images par ligne
     for idx, file in enumerate(uploaded_files, start=start_number):
         ext = os.path.splitext(file.name)[1].lower()
         new_name = f"{sap_code}-{idx}-{title}{ext}"
 
-        # Si image → affichage avec futur nom
-        if ext in [".png", ".jpg", ".jpeg", ".gif", ".bmp", ".webp"]:
-            st.image(file, caption=new_name, width=200)
-        else:
-            st.text(f"📄 {new_name}")
+        with cols[(idx - start_number) % 5]:  # affiche en grille
+            if ext in [".png", ".jpg", ".jpeg", ".gif", ".bmp", ".webp"]:
+                st.image(file, caption=new_name, use_column_width=True)
+            else:
+                st.text(f"📄 {new_name}")
 
 if st.button("Renommer & Télécharger"):
     if not sap_code.isdigit():
