@@ -74,19 +74,19 @@ if len(files) > 0:
     with c3:
         apply_numbers = st.button("✔️ Appliquer les rangs saisis")
 
-    edited = st.data_editor(
-        df,
-        use_container_width=True,
-        hide_index=True,
-        num_rows="fixed",
-        column_config={
-            "Sel": st.column_config.CheckboxColumn(help="Sélectionner des lignes à déplacer"),
-            "Ordre": st.column_config.NumberColumn(step=1, min_value=1, help="Modifier pour imposer un rang"),
-            "Nom original": st.column_config.TextColumn(disabled=True),
-            "Nouveau nom": st.column_config.TextColumn(disabled=True),
-            "_id": st.column_config.TextColumn(disabled=True)
-        )
-    )
+edited = st.data_editor(
+    df,
+    use_container_width=True,
+    hide_index=True,
+    num_rows="fixed",
+    column_config={
+        "Sel": st.column_config.CheckboxColumn(help="Sélectionner des lignes à déplacer"),
+        "Ordre": st.column_config.NumberColumn(step=1, min_value=1, help="Modifier pour imposer un rang"),
+        "Nom original": st.column_config.TextColumn(disabled=True),
+        "Nouveau nom": st.column_config.TextColumn(disabled=True),
+        "_id": st.column_config.TextColumn(disabled=True),
+    }
+)
 
     # --- Actions sur l’ordre ---
     # 1) Appliquer les valeurs saisies dans "Ordre" (normalisation 1..N)
