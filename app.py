@@ -88,17 +88,16 @@ edited = st.data_editor(
     }
 )
 
-    # --- Actions sur l’ordre ---
-    # 1) Appliquer les valeurs saisies dans "Ordre" (normalisation 1..N)
-    if apply_numbers:
-        # Trie par Ordre saisi puis renumérote proprement
-        tmp = edited.sort_values(by=["Ordre", "Nom original"]).reset_index(drop=True)
-        for idx, row in tmp.iterrows():
-            _id = row["_id"]
-            st.session_state.file_list = [
-                {**it, "order": (idx + start_idx)} if it["id"] == _id else it
-                for it in st.session_state.file_list
-            ]
+# --- Actions sur l’ordre ---
+# 1) Appliquer les valeurs saisies dans "Ordre"
+if apply_numbers:
+    tmp = edited.sort_values(by=["Ordre", "Nom original"]).reset_index(drop=True)
+    for idx, row in tmp.iterrows():
+        _id = row["_id"]
+        st.session_state.file_list = [
+            {**it, "order": (idx + start_idx)} if it["id"] == _id else it
+            for it in st.session_state.file_list
+        ]
 
     # 2) Monter / Descendre la sélection (swap progressif, garde l’ordre interne)
     selected_ids = [row["_id"] for _, row in edited.iterrows() if row["Sel"]]
