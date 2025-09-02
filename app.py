@@ -20,7 +20,7 @@ if uploaded_files and sap_code.isdigit() and title.strip():
 
         with cols[(idx - start_number) % 5]:  # affiche en grille
             if ext in [".png", ".jpg", ".jpeg", ".gif", ".bmp", ".webp"]:
-                st.image(file, caption=new_name, use_column_width=True)
+                st.image(file, caption=new_name, use_container_width=True)
             else:
                 st.text(f"📄 {new_name}")
 
