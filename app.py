@@ -3,6 +3,7 @@ import os
 from io import BytesIO
 from zipfile import ZipFile
 
+st.set_page_config(page_title="Nom’Propre", page_icon="🧼", layout="wide")
 st.title("📂 Nom’Propre – L'outil de renommage")
 
 # Champs utilisateur
@@ -13,11 +14,11 @@ start_number = st.number_input("Numéro de départ", value=1, step=1)
 uploaded_files = st.file_uploader("Sélectionne tes fichiers", type=None, accept_multiple_files=True)
 
 zip_bytes = None
-zip_name = "fichiers_renommes.zip"  # valeur par défaut
+zip_name = "fichiers_renommes.zip"
 
 if uploaded_files and sap_code.isdigit() and title.strip():
     st.markdown("### 👀 Preview des fichiers renommés")
-    cols = st.columns(5)  # 5 images par ligne
+    cols = st.columns(5)
     start_idx = int(start_number)
 
     prepared = []
@@ -27,7 +28,6 @@ if uploaded_files and sap_code.isdigit() and title.strip():
         data = file.getvalue()
         prepared.append((new_name, data, ext))
 
-    # Preview
     for i, (new_name, data, ext) in enumerate(prepared):
         with cols[i % 5]:
             if ext.lower() in [".png", ".jpg", ".jpeg", ".gif", ".bmp", ".webp"]:
@@ -35,17 +35,14 @@ if uploaded_files and sap_code.isdigit() and title.strip():
             else:
                 st.text(f"📄 {new_name}")
 
-    # Construire le zip
     buf = BytesIO()
     with ZipFile(buf, 'w') as zipf:
         for new_name, data, _ in prepared:
             zipf.writestr(new_name, data)
     zip_bytes = buf.getvalue()
 
-    # Nom dynamique du zip
     zip_name = f"{sap_code}-{title}.zip"
 
-# --- Un seul bouton ---
 if zip_bytes is not None:
     st.download_button(
         "✅ Renommer & Télécharger",
@@ -56,3 +53,13 @@ if zip_bytes is not None:
     )
 else:
     st.button("✅ Renommer & Télécharger", disabled=True, use_container_width=True)
+
+# -------- Footer sympa --------
+st.markdown(
+    """
+    <div style="text-align: center; margin-top: 50px; font-size: 14px; color: grey;">
+        Made with 🩵 by <b>Nom’Propre</b>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
