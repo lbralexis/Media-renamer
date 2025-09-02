@@ -3,15 +3,15 @@ import os
 from io import BytesIO
 from zipfile import ZipFile
 
-st.set_page_config(page_title="Nom’Propre", page_icon="🧼", layout="wide")
-st.title("📂 Nom’Propre – L'outil de renommage")
+st.set_page_config(page_title="BatchName", page_icon="🧼", layout="wide")
+st.title("BatchName")
 
 # Champs utilisateur
-sap_code = st.text_input("Code SAP (uniquement chiffres)", "")
-title = st.text_input("Titre du fichier", "")
+sap_code = st.text_input("Code SAP", "")
+title = st.text_input("Libellé produit", "")
 start_number = st.number_input("Numéro de départ", value=1, step=1)
 
-uploaded_files = st.file_uploader("Sélectionne tes fichiers", type=None, accept_multiple_files=True)
+uploaded_files = st.file_uploader("Sélectionner les fichiers", type=None, accept_multiple_files=True)
 
 zip_bytes = None
 zip_name = "fichiers_renommes.zip"
@@ -45,16 +45,16 @@ if uploaded_files and sap_code.isdigit() and title.strip():
 
 if zip_bytes is not None:
     st.download_button(
-        "✅ Renommer & Télécharger",
+        "Renommer & Télécharger",
         data=zip_bytes,
         file_name=zip_name,
         mime="application/zip",
         use_container_width=True
     )
 else:
-    st.button("✅ Renommer & Télécharger", disabled=True, use_container_width=True)
+    st.button("Renommer & Télécharger", disabled=True, use_container_width=True)
 
-# -------- Footer sympa --------
+
 st.markdown(
     """
     <div style="text-align: center; margin-top: 50px; font-size: 14px; color: grey;">
