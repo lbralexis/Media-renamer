@@ -2,7 +2,7 @@ import streamlit as st
 import os
 from zipfile import ZipFile
 
-st.title("📂 Renommeur de fichiers")
+st.title(" Renommeur de fichiers")
 
 # Champs utilisateur
 sap_code = st.text_input("Code SAP (uniquement chiffres)", "")
