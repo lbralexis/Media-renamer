@@ -2,7 +2,7 @@ import streamlit as st
 import os
 from zipfile import ZipFile
 
-st.title(" Renommeur de fichiers")
+st.title("BatchName")
 
 # Champs utilisateur
 sap_code = st.text_input("Code SAP (uniquement chiffres)", "")
@@ -11,13 +11,13 @@ start_number = st.number_input("Numéro de départ", value=1, step=1)
 
 uploaded_files = st.file_uploader("Sélectionne tes fichiers", type=None, accept_multiple_files=True)
 
-if uploaded_files:
-    st.markdown("### 👀 Prévisualisation des fichiers sélectionnés")
+if uploaded_files and sap_code.isdigit() and title.strip():
+    st.markdown("### 👀 Preview des fichiers renommés")
     for idx, file in enumerate(uploaded_files, start=start_number):
         ext = os.path.splitext(file.name)[1].lower()
         new_name = f"{sap_code}-{idx}-{title}{ext}"
 
-        # Si image → affichage
+        # Si image → affichage avec futur nom
         if ext in [".png", ".jpg", ".jpeg", ".gif", ".bmp", ".webp"]:
             st.image(file, caption=new_name, width=200)
         else:
