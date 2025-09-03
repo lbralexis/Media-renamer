@@ -47,6 +47,7 @@ if uploaded_files and sap_code.isdigit() and title.strip():
 if zip_bytes is not None:
     _, center, _ = st.columns([2, 4, 2])  # centrer au milieu
     with center:
+        st.markdown("## 📦 Tout télécharger")
         st.download_button(
             "⬇️ Télécharger tout en .zip",
             data=zip_bytes,
@@ -55,7 +56,7 @@ if zip_bytes is not None:
             use_container_width=True
         )
 
-        st.markdown("### ou télécharger un par un")
+        st.markdown("## 📂 Ou télécharger un par un")
         for new_name, data, _ in prepared:
             st.download_button(
                 label=new_name,
@@ -64,6 +65,7 @@ if zip_bytes is not None:
                 mime="application/octet-stream",
                 use_container_width=True
             )
+
 else:
     _, center, _ = st.columns([2, 4, 2])
     with center:
