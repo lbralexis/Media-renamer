@@ -7,7 +7,7 @@ st.set_page_config(page_title="BatchName", page_icon="🧼", layout="wide")
 st.title("BatchName")
 
 # Champs utilisateur
-sap_code = st.text_input("Code SAP2", "")
+sap_code = st.text_input("Code SAP", "")
 title = st.text_input("Libellé produit", "")
 start_number = st.number_input("Numéro de départ", value=1, step=1)
 
