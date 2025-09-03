@@ -15,6 +15,7 @@ uploaded_files = st.file_uploader("Sélectionner les fichiers", type=None, accep
 
 zip_bytes = None
 zip_name = "fichiers_renommes.zip"
+prepared = []
 
 if uploaded_files and sap_code.isdigit() and title.strip():
     st.markdown("### Preview des fichiers renommés")
@@ -35,31 +36,46 @@ if uploaded_files and sap_code.isdigit() and title.strip():
             else:
                 st.text(f"📄 {new_name}")
 
+    # Construire le zip
     buf = BytesIO()
     with ZipFile(buf, 'w') as zipf:
         for new_name, data, _ in prepared:
             zipf.writestr(new_name, data)
     zip_bytes = buf.getvalue()
 
+    # Nom dynamique du zip
     zip_name = f"{sap_code}-{title}.zip"
 
+# --- Téléchargements ---
 if zip_bytes is not None:
-    st.download_button(
-        "Renommer & Télécharger",
-        data=zip_bytes,
-        file_name=zip_name,
-        mime="application/zip",
-        use_container_width=True
-    )
+    c1, c2 = st.columns([1, 2])
+    with c1:
+        st.download_button(
+            "⬇️ Tout en .zip",
+            data=zip_bytes,
+            file_name=zip_name,
+            mime="application/zip",
+            use_container_width=True
+        )
+    with c2:
+        st.markdown("⬇️ Fichiers individuels :")
+        for new_name, data, _ in prepared:
+            st.download_button(
+                label=new_name,
+                data=data,
+                file_name=new_name,
+                mime="application/octet-stream"
+            )
 else:
     st.button("Renommer & Télécharger", disabled=True, use_container_width=True)
 
-
+# --- Footer ---
 st.markdown(
     """
     <div style="text-align: center; margin-top: 50px; font-size: 14px; color: grey;">
-        Made with 🩵</b>
+        Made with 🩵
     </div>
     """,
     unsafe_allow_html=True
 )
+
