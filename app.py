@@ -45,19 +45,29 @@ if uploaded_files and sap_code.isdigit() and title.strip():
 
 # --- Téléchargements centrés ---
 if zip_bytes is not None:
-    left, center, right = st.columns([2, 4, 2])  # espaces gauche/droite
+    _, center, _ = st.columns([2, 4, 2])  # centrer au milieu
     with center:
         st.download_button(
-            "⬇️ Renommer & Télécharger",
+            "⬇️ Télécharger tout en .zip",
             data=zip_bytes,
             file_name=zip_name,
             mime="application/zip",
             use_container_width=True
         )
+
+        st.markdown("### ou télécharger un par un")
+        for new_name, data, _ in prepared:
+            st.download_button(
+                label=new_name,
+                data=data,
+                file_name=new_name,
+                mime="application/octet-stream",
+                use_container_width=True
+            )
 else:
-    left, center, right = st.columns([2, 4, 2])
+    _, center, _ = st.columns([2, 4, 2])
     with center:
-        st.button("⬇️ Renommer & Télécharger", disabled=True, use_container_width=True)
+        st.button("⬇️ Télécharger", disabled=True, use_container_width=True)
 
 # --- Footer ---
 st.markdown(
@@ -68,3 +78,4 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+
