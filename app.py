@@ -40,7 +40,7 @@ def get_sorted():
     return sorted(st.session_state.file_list, key=lambda x: x["order"])
 
 # ---------- Entrées ----------
-base_input = st.text_input("Base (colle ici : SAP-Titre)", placeholder="Ex : 252798-AppleWatch")
+base_input = st.text_input("Code Produit", placeholder="Ex : SAP-Titre")
 start_number = st.number_input("Numéro de départ", value=1, step=1)
 
 uploaded_files = st.file_uploader("Sélectionner les fichiers", type=None, accept_multiple_files=True)
@@ -60,7 +60,7 @@ prepared = []
 
 # ---------- Ordonnancement (flèches) + Preview ----------
 if files and sap_code:
-    st.markdown("### Preview & ordonnancement")
+    st.markdown("### Ordonnancement")
     start_idx = int(start_number)
 
     # En-têtes
