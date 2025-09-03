@@ -10,11 +10,9 @@ st.title("BatchName")
 def parse_base(s: str):
     """Attend '######-Titre' ou juste '######' (6 chiffres)."""
     m = re.match(r"^\s*(\d{6})(?:-(.+))?\s*$", s or "")
-    if not m: 
+    if not m:
         return None, None
-    sap = m.group(1)
-    title = (m.group(2) or "").strip()
-    return sap, title
+    return m.group(1), (m.group(2) or "").strip()
 
 def build_name(sap: str, num: int, title: str, ext: str):
     return f"{sap}-{num}-{title}{ext}" if title else f"{sap}-{num}{ext}"
@@ -23,6 +21,8 @@ def build_name(sap: str, num: int, title: str, ext: str):
 if "file_list" not in st.session_state:
     # Chaque item: {id, orig_name, ext, bytes, order}
     st.session_state.file_list = []
+if "upload_signature" not in st.session_state:
+    st.session_state.upload_signature = None  # tuple des (name,size) pour détecter un nouvel upload
 
 def load_files(uploaded_files):
     st.session_state.file_list = []
@@ -44,8 +44,13 @@ base_input = st.text_input("Base (colle ici : SAP-Titre)", placeholder="Ex : 252
 start_number = st.number_input("Numéro de départ", value=1, step=1)
 
 uploaded_files = st.file_uploader("Sélectionner les fichiers", type=None, accept_multiple_files=True)
+
+# 🔒 Ne recharge les fichiers QUE si l'upload a changé
 if uploaded_files:
-    load_files(uploaded_files)
+    signature = tuple((f.name, getattr(f, "size", None)) for f in uploaded_files)
+    if st.session_state.upload_signature != signature:
+        load_files(uploaded_files)
+        st.session_state.upload_signature = signature
 
 sap_code, title = parse_base(base_input)
 files = get_sorted()
@@ -58,43 +63,42 @@ if files and sap_code:
     st.markdown("### Preview & ordonnancement")
     start_idx = int(start_number)
 
-    # Ligne d'entête
-    hdr = st.columns([6, 2, 1, 1])
-    hdr[0].markdown("**Nom original**")
-    hdr[1].markdown("**Nouveau nom**")
-    hdr[2].markdown("**⬆️**")
-    hdr[3].markdown("**⬇️**")
+    # En-têtes
+    h1, h2, h3, h4 = st.columns([6, 3, 1, 1])
+    h1.markdown("**Nom original**")
+    h2.markdown("**Nouveau nom**")
+    h3.markdown("**⬆️**")
+    h4.markdown("**⬇️**")
 
-    # Pour chaque ligne, boutons Monter/Descendre
     for pos, it in enumerate(files):
         num = start_idx + pos
         new_name = build_name(sap_code, num, title or "", it["ext"])
 
-        c1, c2, c3, c4 = st.columns([6, 2, 1, 1])
+        c1, c2, c3, c4 = st.columns([6, 3, 1, 1])
         c1.write(it["orig_name"])
         c2.write(new_name)
 
         up_key = f"up_{it['id']}"
         down_key = f"down_{it['id']}"
 
-        # Désactiver si déjà en haut/bas
         up_pressed = c3.button("Monter", key=up_key, disabled=(pos == 0))
         down_pressed = c4.button("Descendre", key=down_key, disabled=(pos == len(files)-1))
 
-        # Appliquer le swap dès qu'on clique
         if up_pressed and pos > 0:
+            # swap des 'order' avec le précédent
             files[pos]["order"], files[pos-1]["order"] = files[pos-1]["order"], files[pos]["order"]
             st.session_state.file_list = get_sorted()
             st.rerun()
 
         if down_pressed and pos < len(files)-1:
+            # swap des 'order' avec le suivant
             files[pos]["order"], files[pos+1]["order"] = files[pos+1]["order"], files[pos]["order"]
             st.session_state.file_list = get_sorted()
             st.rerun()
 
     st.divider()
 
-    # Preview vignettes (5 colonnes) recalculée avec l'ordre courant
+    # Preview visuelle 5 colonnes (ordre actuel)
     st.markdown("#### Aperçu visuel")
     cols = st.columns(5)
     files = get_sorted()
@@ -109,9 +113,9 @@ if files and sap_code:
             else:
                 st.text(f"📄 {new_name}")
 
-    # Construire le ZIP en mémoire
+    # ZIP en mémoire
     buf = BytesIO()
-    with ZipFile(buf, 'w') as zipf:
+    with ZipFile(buf, "w") as zipf:
         for new_name, data, _ in prepared:
             zipf.writestr(new_name, data)
     zip_bytes = buf.getvalue()
