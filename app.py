@@ -17,7 +17,7 @@ zip_bytes = None
 zip_name = "fichiers_renommes.zip"
 
 if uploaded_files and sap_code.isdigit() and title.strip():
-    st.markdown("###Preview des fichiers renommés")
+    st.markdown("### Preview des fichiers renommés")
     cols = st.columns(5)
     start_idx = int(start_number)
 
