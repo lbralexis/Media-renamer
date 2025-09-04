@@ -72,15 +72,25 @@ if files and sap_code:
         num = start_idx + pos
         new_name = build_name(sap_code, num, title or "", it["ext"])
 
-        c1, c2, c3, c4 = st.columns([1, 1, 5, 3])
-        up_key = f"up_{it['id']}"
-        down_key = f"down_{it['id']}"
+c1, c2, c3 = st.columns([2, 5, 3])
 
-        up_pressed = c1.button("⬆️", key=up_key, disabled=(pos == 0))
-        down_pressed = c2.button("⬇️", key=down_key, disabled=(pos == len(files)-1))
+with c1:
+    st.markdown(
+        f"""
+        <div style="display:flex; gap:2px;">
+            <form action="#" method="get">
+                <button {'disabled' if pos == 0 else ''} style="padding:2px 8px;">⬆️</button>
+            </form>
+            <form action="#" method="get">
+                <button {'disabled' if pos == len(files)-1 else ''} style="padding:2px 8px;">⬇️</button>
+            </form>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+c2.write(it["orig_name"])
+c3.write(new_name)
 
-        c3.write(it["orig_name"])
-        c4.write(new_name)
 
         if up_pressed and pos > 0:
             files[pos]["order"], files[pos-1]["order"] = files[pos-1]["order"], files[pos]["order"]
