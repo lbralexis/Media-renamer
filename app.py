@@ -60,7 +60,7 @@ prepared = []
 
 # ---------- Ordonnancement + Preview ----------
 if files and sap_code:
-    st.markdown("### Preview & ordonnancement")
+    st.markdown("### Ordonnancement")
     start_idx = int(start_number)
 
     # En-têtes (boutons d’abord)
@@ -134,7 +134,7 @@ if zip_bytes:
     with center:
         st.markdown("## Tout télécharger")
         st.download_button(
-            "⬇Télécharger tout en .zip",
+            "Télécharger tout en .zip",
             data=zip_bytes,
             file_name=zip_name,
             mime="application/zip",
