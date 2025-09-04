@@ -132,15 +132,15 @@ elif uploaded_files and base_input and not sap_code:
 if zip_bytes:
     _, center, _ = st.columns([2, 4, 2])
     with center:
-        st.markdown("## 📦 Tout télécharger")
+        st.markdown("## Tout télécharger")
         st.download_button(
-            "⬇️ Télécharger tout en .zip",
+            "⬇Télécharger tout en .zip",
             data=zip_bytes,
             file_name=zip_name,
             mime="application/zip",
             use_container_width=True
         )
-        st.markdown("## 📂 Ou télécharger un par un")
+        st.markdown("## Télécharger un par un")
         for new_name, data, _ in prepared:
             st.download_button(
                 label=new_name,
@@ -152,7 +152,7 @@ if zip_bytes:
 else:
     _, center, _ = st.columns([2, 4, 2])
     with center:
-        st.button("⬇️ Télécharger", disabled=True, use_container_width=True)
+        st.button("Télécharger", disabled=True, use_container_width=True)
 
 # ---------- Footer ----------
 st.markdown(
