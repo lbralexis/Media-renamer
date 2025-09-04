@@ -40,7 +40,7 @@ def get_sorted():
     return sorted(st.session_state.file_list, key=lambda x: x["order"])
 
 # ---------- Entrées ----------
-base_input = st.text_input("Base (colle ici : SAP-Titre)", placeholder="Ex : 252798-AppleWatch")
+base_input = st.text_input("Code SAP & Libellé", placeholder="Ex : 252798-AppleWatch")
 start_number = st.number_input("Numéro de départ", value=1, step=1)
 
 uploaded_files = st.file_uploader("Sélectionner les fichiers", type=None, accept_multiple_files=True)
@@ -126,7 +126,7 @@ if files and sap_code:
     zip_name = f"{sap_code}-{(title or '').strip()}.zip" if title else f"{sap_code}.zip"
 
 elif uploaded_files and base_input and not sap_code:
-    st.error("Format invalide. Utilise : 6 chiffres, puis un tiret et le titre (ex : 252798-AppleWatch).")
+    st.error("Format invalide. Utilise : 6 chiffres (SAP), puis un tiret et le titre (ex : 252798-AppleWatch).")
 
 # ---------- Téléchargements centrés ----------
 if zip_bytes:
