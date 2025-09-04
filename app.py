@@ -19,9 +19,10 @@ def build_name(sap: str, num: int, title: str, ext: str):
 
 # ---------- État ----------
 if "file_list" not in st.session_state:
+    # Chaque item: {id, orig_name, ext, bytes, order}
     st.session_state.file_list = []
 if "upload_signature" not in st.session_state:
-    st.session_state.upload_signature = None
+    st.session_state.upload_signature = None  # pour détecter un nouvel upload
 
 def load_files(uploaded_files):
     st.session_state.file_list = []
@@ -44,6 +45,7 @@ start_number = st.number_input("Numéro de départ", value=1, step=1)
 
 uploaded_files = st.file_uploader("Sélectionner les fichiers", type=None, accept_multiple_files=True)
 
+# Ne recharge les fichiers QUE si l'upload a changé
 if uploaded_files:
     signature = tuple((f.name, getattr(f, "size", None)) for f in uploaded_files)
     if st.session_state.upload_signature != signature:
@@ -61,37 +63,33 @@ if files and sap_code:
     st.markdown("### Preview & ordonnancement")
     start_idx = int(start_number)
 
-    # En-têtes : boutons d’abord
-    h1, h2, h3, h4 = st.columns([1, 1, 5, 3])
-    h1.markdown("**⬆️**")
-    h2.markdown("**⬇️**")
-    h3.markdown("**Nom original**")
-    h4.markdown("**Nouveau nom**")
+    # En-têtes (boutons d’abord)
+    h1, h2, h3 = st.columns([2, 5, 3])
+    h1.markdown("**Actions**")
+    h2.markdown("**Nom original**")
+    h3.markdown("**Nouveau nom**")
 
+    # Lignes
     for pos, it in enumerate(files):
         num = start_idx + pos
         new_name = build_name(sap_code, num, title or "", it["ext"])
 
-c1, c2, c3 = st.columns([2, 5, 3])
+        c1, c2, c3 = st.columns([2, 5, 3])
 
-with c1:
-    st.markdown(
-        f"""
-        <div style="display:flex; gap:2px;">
-            <form action="#" method="get">
-                <button {'disabled' if pos == 0 else ''} style="padding:2px 8px;">⬆️</button>
-            </form>
-            <form action="#" method="get">
-                <button {'disabled' if pos == len(files)-1 else ''} style="padding:2px 8px;">⬇️</button>
-            </form>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-c2.write(it["orig_name"])
-c3.write(new_name)
+        # Boutons ⬆️ ⬇️ collés horizontalement (gap minimal)
+        with c1:
+            b1, b2 = st.columns([1, 1], gap="small")
+            up_key = f"up_{it['id']}"
+            down_key = f"down_{it['id']}"
+            with b1:
+                up_pressed = st.button("⬆️", key=up_key, disabled=(pos == 0))
+            with b2:
+                down_pressed = st.button("⬇️", key=down_key, disabled=(pos == len(files)-1))
 
+        c2.write(it["orig_name"])
+        c3.write(new_name)
 
+        # Swaps
         if up_pressed and pos > 0:
             files[pos]["order"], files[pos-1]["order"] = files[pos-1]["order"], files[pos]["order"]
             st.session_state.file_list = get_sorted()
@@ -104,7 +102,7 @@ c3.write(new_name)
 
     st.divider()
 
-    # Preview images (5 colonnes)
+    # Preview visuelle (5 colonnes) selon l'ordre courant
     st.markdown("#### Aperçu visuel")
     cols = st.columns(5)
     files = get_sorted()
@@ -119,7 +117,7 @@ c3.write(new_name)
             else:
                 st.text(f"📄 {new_name}")
 
-    # Construire le ZIP
+    # ZIP en mémoire
     buf = BytesIO()
     with ZipFile(buf, "w") as zipf:
         for new_name, data, _ in prepared:
